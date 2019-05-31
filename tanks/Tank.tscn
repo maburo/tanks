@@ -1,7 +1,52 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://tanks/Tank.gd" type="Script" id=1]
+[ext_resource path="res://assets/Spritesheet/allSprites_default.png" type="Texture" id=2]
+[ext_resource path="res://effects/Explosion.tscn" type="PackedScene" id=3]
 
+[sub_resource type="Animation" id=1]
+resource_name = "init"
+tracks/0/type = "value"
+tracks/0/path = NodePath("Turret/Flash:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ) ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "muzzle_flash"
+length = 0.15
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("Turret/Flash:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.11, 0.15 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("Turret/Flash:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.04, 0.08 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1.5, 1.5 ), Vector2( 1, 1 ) ]
+}
 
 [node name="Tank" type="KinematicBody2D"]
 script = ExtResource( 1 )
@@ -16,5 +61,19 @@ region_rect = Rect2( 216, 208, 42, 40 )
 
 [node name="Muzzle" type="Position2D" parent="Turret"]
 
+[node name="Flash" type="Sprite" parent="Turret"]
+modulate = Color( 1, 1, 1, 0 )
+rotation = -1.5708
+texture = ExtResource( 2 )
+region_enabled = true
+region_rect = Rect2( 507, 539, 20, 25 )
+
 [node name="GunTimer" type="Timer" parent="."]
+
+[node name="Explosion" parent="." instance=ExtResource( 3 )]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/init = SubResource( 1 )
+anims/muzzle_flash = SubResource( 2 )
 [connection signal="timeout" from="GunTimer" to="." method="_on_GunTimer_timeout"]
+[connection signal="animation_finished" from="Explosion" to="." method="_on_Explosion_animation_finished"]

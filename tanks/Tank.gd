@@ -28,7 +28,11 @@ func take_damage(amount:int):
 		explode()
 		
 func explode():
-	queue_free()
+	$Sprite.hide()
+	$Turret.hide()
+	$Explosion.show()
+	$Explosion.play()
+	
 	
 func control(delta):
 	pass
@@ -47,6 +51,11 @@ func shoot():
 		var dir = Vector2(1, 0).rotated($Turret.global_rotation).normalized()
 		var v = $Turret/Muzzle.global_position
 		emit_signal("shoot", Bullet, v, dir)
+		$AnimationPlayer.play("muzzle_flash")
 
 func _on_GunTimer_timeout():
 	can_shoot = true
+
+
+func _on_Explosion_animation_finished():
+	queue_free()
